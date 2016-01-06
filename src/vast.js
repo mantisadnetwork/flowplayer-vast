@@ -1,4 +1,5 @@
-var vast = require("../bower_components/vast-client-js/vast-client");
+var vast = require('vast-client');
+
 var videoFormats = ['application/x-mpegurl', 'video/webm', 'video/mp4'];
 
 module.exports = {

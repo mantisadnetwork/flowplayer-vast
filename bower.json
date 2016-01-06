@@ -1,13 +1,12 @@
 {
   "name": "flowplayer-vast",
-  "version": "1.0.0",
-  "dependencies": {
-    "vast-client-js": "1.3.4"
-  },
+  "version": "1.0.1",
   "homepage": "https://github.com/mantisadnetwork/flowplayer-vast",
   "description": "VAST 2.0 support within Flowplayer 6 HTML",
   "main": "dist/vast.min.js",
-  "moduleType": [],
+  "moduleType": [
+    "node"
+  ],
   "keywords": [
     "vast",
     "flowplayer",
