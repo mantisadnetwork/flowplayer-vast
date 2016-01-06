@@ -17,6 +17,7 @@ module.exports = {
 		var ready = false;
 		var ad = null;
 		var onReadied = false;
+		var skipped = false;
 		var forceAd = false;
 
 		var onReady = function () {
@@ -87,6 +88,8 @@ module.exports = {
 
 				title.onclick = function () {
 					if (player.video.skip && player.video.time >= player.video.skip) {
+						skipped = true;
+
 						ad.tracker.skip();
 
 						player.play(1);
@@ -120,7 +123,9 @@ module.exports = {
 			player.disable(player.video.ad || false);
 
 			if (forceAd && !player.video.ad) {
-				ad.tracker.complete();
+				if(!skipped){
+					ad.tracker.complete();
+				}
 
 				// take ad out of rotation once user has seen it
 				player.removePlaylistItem(0);
