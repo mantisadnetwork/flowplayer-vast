@@ -1,4 +1,6 @@
 # flowplayer-vast
+VAST 2.0 support within Flowplayer 6 HTML
+
 **Note**: This project is a work in progress and may not fulfill all of the VAST 2.0 spec yet.
 
 ## Changelog
