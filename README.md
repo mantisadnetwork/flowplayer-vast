@@ -8,6 +8,8 @@ VAST 2.0 support within Flowplayer 6 HTML
 1. Create a flowplayer instance like you normally would (make sure you use the playlist feature).
 2. Invoke the attach method to start the vast loading process.
 3. The player will will until the vast load has completed (or failed) and rewrite the playlist.
+ * Only the first video returned in the VAST response is used.
+ * If the creative is of type "application/javascript" the playlist is left as is and the event vpaid_js is invoked on the player object.
 4. The player will be locked until the ad has been viewed then removed from the playlist.
 
 ## Usage
@@ -24,6 +26,16 @@ var player = flowplayer(container, {
 });
 
 vast.attach(container, player, 'http://serer.com/vast.xml');
+```
+
+## VPAID (JS)
+
+To support vpaid responses for javascript, you can either use the [flowplayer-vpaid](https://github.com/mantisadnetwork/flowplayer-vpaid) project or implement your own like so:
+
+```
+player.on('vpaid_js', function (e, config) {
+    // configure vpaid environment
+});
 ```
 
 ## Changelog
