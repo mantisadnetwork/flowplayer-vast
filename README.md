@@ -28,5 +28,6 @@ vast.attach(container, player, 'http://serer.com/vast.xml');
 
 ## Changelog
 
+* 1.0.2: Fixed for vpaid js ads
 * 1.0.1: Moved to browserify
 * 1.0.0: Initial release

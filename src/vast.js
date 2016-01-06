@@ -20,7 +20,7 @@ module.exports = {
 		var forceAd = false;
 
 		var onReady = function () {
-			if (hasAds && ready && !onReadied) {
+			if (hasAds && ready && !onReadied && ad) {
 				onReadied = true;
 
 				// setPlaylist only works after ready event fires
@@ -43,15 +43,17 @@ module.exports = {
 		}
 
 		this.loadVast(container, url, function (results) {
-			hasAds = results.length > 0;
-
 			if (results[0].js) {
+				hasAds = false;
+
 				return player.trigger('vpaid_js', [results[0].js]);
 			}
 
-			// only handle single pre-roll for now
-			if (results[0].clip) {
-				ad = results[0].clip;
+			if (hasAds = results.length > 0) {
+				// only handle single pre-roll for now
+				if (results[0].clip) {
+					ad = results[0].clip;
+				}
 			}
 
 			onReady();
