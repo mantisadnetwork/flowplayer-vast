@@ -1,0 +1,19 @@
+{
+  "name": "flowplayer-vast",
+  "version": "1.0.0",
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "bower": "1.7.2",
+    "babel-cli": "6.3.17",
+    "babel-loader": "6.2.1",
+    "transform-loader": "0.2.3",
+    "brfs": "1.4.2",
+    "webpack": "1.12.9"
+  },
+  "scripts":{
+    "bower": "node_modules/.bin/bower install",
+    "build": "node_modules/.bin/webpack --config webpack.js"
+  }
+}

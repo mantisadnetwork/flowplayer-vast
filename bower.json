@@ -1,0 +1,27 @@
+{
+  "name": "flowplayer-vast",
+  "version": "1.0.0",
+  "dependencies": {
+    "vast-client-js": "1.3.4"
+  },
+  "homepage": "https://github.com/mantisadnetwork/flowplayer-vast",
+  "description": "VAST 2.0 support within Flowplayer 6 HTML",
+  "main": "dist/vast.min.js",
+  "moduleType": [],
+  "keywords": [
+    "vast",
+    "flowplayer",
+    "video"
+  ],
+  "authors": [
+    "Paris Holley"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
