@@ -10,5 +10,22 @@
   },
   "scripts": {
     "build": "browserify -t uglifyify src/vast.js -o dist/vast.js && browserify -g uglifyify dist/vast.js -o dist/vast.min.js"
-  }
+  },
+  "description": "**Note**: This project is a work in progress and may not fulfill all of the VAST 2.0 spec yet.",
+  "main": "src/vast.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mantisadnetwork/flowplayer-vast.git"
+  },
+  "keywords": [
+    "video",
+    "vast",
+    "flowplayer"
+  ],
+  "author": "Paris Holley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mantisadnetwork/flowplayer-vast/issues"
+  },
+  "homepage": "https://github.com/mantisadnetwork/flowplayer-vast#readme"
 }
