@@ -40,6 +40,7 @@ player.on('vpaid_js', function (e, config) {
 
 ## Changelog
 
+* 1.0.3: Bug fix
 * 1.0.2: Fixed for vpaid js ads
 * 1.0.1: Moved to browserify
 * 1.0.0: Initial release

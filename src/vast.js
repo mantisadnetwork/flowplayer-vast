@@ -43,7 +43,7 @@ module.exports = {
 		}
 
 		this.loadVast(container, url, function (results) {
-			if (results[0].js) {
+			if (results[0] && results[0].js) {
 				hasAds = false;
 
 				return player.trigger('vpaid_js', [results[0].js]);
