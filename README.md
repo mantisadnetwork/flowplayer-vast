@@ -60,12 +60,6 @@ vast.loadPreroll(container, 'http://serer.com/vast.xml', function(preroll){
         }
     }
 });
-
-var player = flowplayer(container, {
-    playlist: []
-});
-
-vast.init(container, player, 'http://serer.com/vast.xml');
 ```
 
 ## VPAID (JS)
