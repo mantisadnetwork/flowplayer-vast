@@ -40,6 +40,7 @@ player.on('vpaid_js', function (e, config) {
 
 ## Changelog
 
+* 1.1.0: More granular API, edge case fixes across device
 * 1.0.4: Only mark complete if it has not been skipped
 * 1.0.3: Bug fix
 * 1.0.2: Fixed for vpaid js ads

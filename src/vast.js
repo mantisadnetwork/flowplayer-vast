@@ -3,7 +3,7 @@ var vast = require('vast-client');
 var videoFormats = ['application/x-mpegurl', 'video/webm', 'video/mp4'];
 
 module.exports = {
-	attach: function (container, player, url) {
+	init: function (container, player, url) {
 		if (player.conf.wmode != 'transparent') {
 			throw new Error('The player must have wmove = transparent for video clicks to work in IE.');
 		}
@@ -12,22 +12,58 @@ module.exports = {
 			throw new Error('The player must have a playlist configured.');
 		}
 
-		var onClick = false;
-		var hasAds = null;
-		var ready = false;
-		var ad = null;
-		var onReadied = false;
-		var skipped = false;
-		var forceAd = false;
+		var that = this;
 
-		var onReady = function () {
-			if (hasAds && ready && !onReadied && ad) {
-				onReadied = true;
+		this.loadPreroll(container, url, function (preroll) {
+			if (preroll) {
+				if (preroll.swf) {
+					return player.trigger('vpaid_swf', [preroll.swf]);
+				}
 
-				// setPlaylist only works after ready event fires
-				player.setPlaylist([ad, player.video]);
+				if (preroll.js) {
+					return player.trigger('vpaid_js', [preroll.js]);
+				}
+
+				if (preroll.video) {
+					that.attachEvents(container, player);
+
+					var forced = false;
+
+					player.one('resume load', function (e) {
+						// forces pre-roll to play first after updating playlist
+						if (forced) {
+							return;
+						}
+
+						forced = true;
+
+						e.preventDefault();
+
+						setTimeout(function () {
+							var newPlaylist = player.conf.playlist.slice(0);
+							newPlaylist.unshift(preroll.video);
+
+							player.setPlaylist(newPlaylist);
+
+							// timeout makes play work on mobile
+							player.play(0);
+						}, 0);
+
+						return false;
+					});
+				}
 			}
-		};
+		});
+	},
+	attachEvents: function (container, player) {
+		var forceAd = false;
+		var skipped = false;
+		var tracker = null;
+		var onClick = false;
+		var adLoaded = false;
+		var disabled = false;
+		var completed = false;
+		var adPlayed = false;
 
 		if (flowplayer.support.inlineVideo) {
 			var ui = container.querySelectorAll('.fp-player')[0];
@@ -35,43 +71,17 @@ module.exports = {
 			ui.addEventListener('click', function (e) {
 				var isElement = e.target.className == 'fp-ui' || e.target.className == 'fp-engine';
 
-				if (!isElement || !player.video.ad) {
+				if (!isElement || !player.video.ad || !player.playing) {
 					return;
 				}
 
-				ad.tracker.click();
+				player.video.tracker.click();
 			}, true);
 		}
 
-		this.loadVast(container, url, function (results) {
-			if (results[0] && results[0].js) {
-				hasAds = false;
-
-				return player.trigger('vpaid_js', [results[0].js]);
-			}
-
-			if (hasAds = results.length > 0) {
-				// only handle single pre-roll for now
-				if (results[0].clip) {
-					ad = results[0].clip;
-				}
-			}
-
-			onReady();
-		});
-
-		player.on('resume', function () {
-			if (hasAds == undefined) {
-				// TODO: trigger loading indicator on player?
-				// do not play until vast has loaded
-				return player.stop();
-			}
-
-			if (hasAds && !forceAd) {
-				forceAd = true;
-
-				player.play(0);
-			}
+		player.on('unload', function () {
+			// allow user to replay video on mobile if they exit out ad early
+			player.disable(false);
 		});
 
 		player.on('progress', function (event, player, duration) {
@@ -79,7 +89,16 @@ module.exports = {
 				return;
 			}
 
-			ad.tracker.setProgress(duration);
+			adPlayed = true;
+
+			if (!disabled) {
+				// prevent user from altering player state when ad is showing (does not work on mobile)
+				player.disable(true);
+
+				disabled = true;
+			}
+
+			player.video.tracker.setProgress(duration);
 
 			var title = container.querySelectorAll('.fp-title')[0];
 
@@ -90,7 +109,7 @@ module.exports = {
 					if (player.video.skip && player.video.time >= player.video.skip) {
 						skipped = true;
 
-						ad.tracker.skip();
+						player.video.tracker.skip();
 
 						player.play(1);
 					}
@@ -110,29 +129,34 @@ module.exports = {
 			}
 		});
 
-		player.on('ready', function () {
-			ready = true;
-
-			onReady();
-
-			if (player.video.ad) {
-				ad.tracker.load();
+		player.on('finish.vast_complete', function () {
+			if (!player.video.ad) {
+				return;
 			}
 
-			// prevent user from altering player state when ad is showing
-			player.disable(player.video.ad || false);
+			player.off('finish.vast_complete');
 
-			if (forceAd && !player.video.ad) {
-				if(!skipped){
-					ad.tracker.complete();
-				}
+			if (!skipped) {
+				player.video.tracker.complete();
+			}
+		});
 
-				// take ad out of rotation once user has seen it
+		player.on('ready', function () {
+			if (player.video.ad) {
+				return player.video.tracker.load();
+			}
+
+			player.disable(false);
+
+			if (!completed && adPlayed) {
+				completed = true;
+
+				// take pre-roll out of rotation once user has seen it
 				player.removePlaylistItem(0);
 			}
 		});
 	},
-	loadVast: function (container, url, callback) {
+	loadPreroll: function (container, url, callback) {
 		vast.client.get(url, function (response) {
 			var ads = [];
 
@@ -143,8 +167,10 @@ module.exports = {
 							return;
 						}
 
+						var tracker = new vast.tracker(ad, creative);
+
 						var clip = {
-							tracker: new vast.tracker(ad, creative),
+							tracker: tracker,
 							skip: creative.skipDelay,
 							title: 'Advertisement',
 							ad: true,
@@ -162,9 +188,23 @@ module.exports = {
 							if (media.mimeType == 'application/javascript') {
 								return ads.push({
 									js: {
+										width: media.width,
+										height: media.height,
 										src: media.fileURL,
 										parameters: creative.adParameters,
-										tracker: new vast.tracker(ad, creative)
+										tracker: tracker
+									}
+								});
+							}
+
+							if (media.mimeType == 'application/x-shockwave-flash') {
+								return ads.push({
+									swf: {
+										src: media.fileURL,
+										width: media.width,
+										height: media.height,
+										parameters: creative.adParameters,
+										tracker: tracker
 									}
 								});
 							}
@@ -212,7 +252,21 @@ module.exports = {
 				});
 			}
 
-			callback(ads);
+			if (ads[0]) {
+				if (ads[0].swf) {
+					return callback({type: 'swf', swf: ads[0].swf});
+				}
+
+				if (ads[0].js) {
+					return callback({type: 'js', js: ads[0].js});
+				}
+
+				if (ads[0].clip) {
+					return callback({type: 'video', video: ads[0].clip});
+				}
+			}
+
+			callback(null);
 		});
 	}
 };
