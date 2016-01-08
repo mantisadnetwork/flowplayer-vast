@@ -12,7 +12,7 @@ VAST 2.0 support within Flowplayer 6 HTML
  * If the creative is of type "application/javascript" the playlist is left as is and the event vpaid_js is invoked on the player object.
 4. The player will be locked until the ad has been viewed then removed from the playlist.
 
-## Usage
+## Simple Usage
 
 This plugin requires that you use the flowplayer playlist functionality.
 
@@ -22,10 +22,50 @@ var vast = require('flowplayer-vast');
 var container = document.getElementById('div');
 
 var player = flowplayer(container, {
+    playlist: [],
+    wmode: 'transparent' // support onclick event for IE for ad clicks
+});
+
+vast.init(container, player, 'http://serer.com/vast.xml');
+```
+
+## Advanced Usage
+
+```
+var vast = require('flowplayer-vast');
+
+var container = document.getElementById('div');
+var playlist = [];
+
+vast.loadPreroll(container, 'http://serer.com/vast.xml', function(preroll){
+    if (preroll && preroll.video) {
+        playlist.unshift(preroll.video);
+    }
+
+    var player = flowplayer(container, {
+        playlist: playlist,
+        wmode: 'transparent' // support onclick event for IE for ad clicks
+    });
+
+    if (preroll) {
+        vast.attachEvents(container, player);
+
+        // if you have the flowplayer-vpaid plugin setup
+        if (preroll.swf) {
+            return player.trigger('vpaid_swf', [preroll.swf]);
+        }
+
+        if (preroll.js) {
+            return player.trigger('vpaid_js', [preroll.js]);
+        }
+    }
+});
+
+var player = flowplayer(container, {
     playlist: []
 });
 
-vast.attach(container, player, 'http://serer.com/vast.xml');
+vast.init(container, player, 'http://serer.com/vast.xml');
 ```
 
 ## VPAID (JS)
