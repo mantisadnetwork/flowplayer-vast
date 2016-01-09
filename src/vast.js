@@ -85,7 +85,7 @@ module.exports = {
 		});
 
 		player.on('progress', function (event, player, duration) {
-			if (!player.video.ad) {
+			if (!player.video.ad || !player.playing) {
 				return;
 			}
 

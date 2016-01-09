@@ -1,6 +1,6 @@
 {
   "name": "flowplayer-vast",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "homepage": "https://github.com/mantisadnetwork/flowplayer-vast",
   "description": "VAST 2.0 support within Flowplayer 6 HTML",
   "main": "dist/vast.min.js",
