@@ -156,9 +156,23 @@ module.exports = {
 			}
 		});
 	},
-	loadPreroll: function (container, url, callback) {
+	loadPreroll: function (container, url, callback, timeoutMs) {
+		var timedOut = false;
+
+		var timeout = setTimeout(function () {
+			timedOut = true;
+
+			callback();
+		}, timeoutMs || 5000);
+
 		vast.client.get(url, function (response) {
+			if (timedOut) {
+				return;
+			}
+
 			var ads = [];
+
+			clearTimeout(timeout);
 
 			if (response) {
 				response.ads.forEach(function (ad) {
