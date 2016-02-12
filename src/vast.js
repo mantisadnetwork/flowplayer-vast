@@ -55,12 +55,11 @@ module.exports = {
 			}
 		});
 	},
-	attachEvents: function (container, player) {
-		var forceAd = false;
+	attachEvents: function (container, player, options) {
+		options = options || {};
+
 		var skipped = false;
-		var tracker = null;
 		var onClick = false;
-		var adLoaded = false;
 		var disabled = false;
 		var completed = false;
 		var adPlayed = false;
@@ -151,8 +150,10 @@ module.exports = {
 			if (!completed && adPlayed) {
 				completed = true;
 
-				// take pre-roll out of rotation once user has seen it
-				player.removePlaylistItem(0);
+				if (options.keepPreroll !== true) {
+					// take pre-roll out of rotation once user has seen it
+					player.removePlaylistItem(0);
+				}
 			}
 		});
 	},
