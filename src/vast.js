@@ -67,15 +67,28 @@ module.exports = {
 		if (flowplayer.support.inlineVideo) {
 			var ui = container.querySelectorAll('.fp-player')[0];
 
-			ui.addEventListener('click', function (e) {
+			var onAdClick = function (e) {
 				var isElement = e.target.className == 'fp-ui' || e.target.className == 'fp-engine';
 
 				if (!isElement || !player.video.ad || !player.playing) {
 					return;
 				}
 
+				ui.removeEventListener('click', onAdClick, true);
+
 				player.video.tracker.click();
-			}, true);
+			};
+
+			ui.addEventListener('click', onAdClick, true);
+		}
+
+		if (flowplayer.support.inlineVideo) {
+			player.on('pause', function () {
+				if (player.video.ad) {
+					// ipad will pause video on click and prevent user from continuing
+					player.disable(false);
+				}
+			});
 		}
 
 		player.on('unload', function () {

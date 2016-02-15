@@ -74,6 +74,7 @@ player.on('vpaid_js', function (e, config) {
 
 ## Changelog
 
+* 1.1.4: Fixes issue on iPad where user is unable to play after clicking ad
 * 1.1.3: Ability to keep preroll in rotation
 * 1.1.2: Timeout for loading vast URL and chrome bug
 * 1.1.0: More granular API, edge case fixes across device
