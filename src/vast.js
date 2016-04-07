@@ -87,15 +87,13 @@ module.exports = {
 			player.disable(true);
 		};
 
-		var enabled = function () {
+		var enable = function () {
 			if (options.adjustable) {
 				return;
 			}
 
-			disabled = false;
-
 			player.disable(false);
-		}
+		};
 
 		if (flowplayer.support.inlineVideo) {
 			var ui = container.querySelectorAll('.fp-player')[0];
@@ -119,14 +117,14 @@ module.exports = {
 			player.on('pause', function () {
 				if (player.video.ad) {
 					// ipad will pause video on click and prevent user from continuing
-					enabled();
+					enable();
 				}
 			});
 		}
 
 		player.on('unload', function () {
 			// allow user to replay video on mobile if they exit out ad early
-			enabled();
+			enable();
 		});
 
 		player.on('progress', function (event, player, duration) {
@@ -136,7 +134,6 @@ module.exports = {
 
 			adPlayed = true;
 
-			// prevent user from altering player state when ad is showing (does not work on mobile)
 			disable();
 
 			player.video.tracker.setProgress(duration);
@@ -187,7 +184,7 @@ module.exports = {
 				return player.video.tracker.load();
 			}
 
-			player.disable(false);
+			enable();
 
 			if (!completed && adPlayed) {
 				completed = true;
