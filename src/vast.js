@@ -60,7 +60,6 @@ module.exports = {
 
 		var skipped = false;
 		var onClick = false;
-		var disabled = false;
 		var completed = false;
 		var adPlayed = false;
 
@@ -76,13 +75,6 @@ module.exports = {
 			if (options.adjustable) {
 				return;
 			}
-
-			// prevent user from altering player state when ad is showing (does not work on mobile)
-			if (disabled) {
-				return;
-			}
-
-			disabled = true;
 
 			player.disable(true);
 		};
@@ -154,7 +146,7 @@ module.exports = {
 						}
 					};
 				}
-				
+
 				if (player.video.skip) {
 					if (player.video.skip && duration >= player.video.skip) {
 						title.innerHTML = "Advertisement: <strong>Skip Ad &raquo;</strong>";
