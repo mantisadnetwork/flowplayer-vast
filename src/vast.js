@@ -140,21 +140,21 @@ module.exports = {
 
 			var title = container.querySelectorAll('.fp-title')[0];
 
-			if (!onClick) {
-				onClick = true;
-
-				title.onclick = function () {
-					if (player.video.skip && player.video.time >= player.video.skip) {
-						skipped = true;
-
-						player.video.tracker.skip();
-
-						player.play(1);
-					}
-				};
-			}
-
 			if (title) {
+				if (!onClick) {
+					onClick = true;
+
+					title.onclick = function () {
+						if (player.video.skip && player.video.time >= player.video.skip) {
+							skipped = true;
+
+							player.video.tracker.skip();
+
+							player.play(1);
+						}
+					};
+				}
+				
 				if (player.video.skip) {
 					if (player.video.skip && duration >= player.video.skip) {
 						title.innerHTML = "Advertisement: <strong>Skip Ad &raquo;</strong>";

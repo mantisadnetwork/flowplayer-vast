@@ -74,6 +74,7 @@ player.on('vpaid_js', function (e, config) {
 
 ## Changelog
 
+* 1.1.7: Fix when there is no title
 * 1.1.6: Fix from last change
 * 1.1.5: Allow pausing and volume changing of ads
 * 1.1.4: Fixes issue on iPad where user is unable to play after clicking ad

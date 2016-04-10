@@ -1,6 +1,6 @@
 {
   "name": "flowplayer-vast",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "dependencies": {
     "vast-client": "parisholley/vast-client-js#chromium"
   },
