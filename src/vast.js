@@ -102,7 +102,9 @@ module.exports = {
 				player.video.tracker.click();
 			};
 
-			ui.addEventListener('click', onAdClick, true);
+			if(ui){
+				ui.addEventListener('click', onAdClick, true);
+			}
 		}
 
 		if (flowplayer.support.inlineVideo) {
