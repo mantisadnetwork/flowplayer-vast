@@ -102,7 +102,7 @@ module.exports = {
 				player.video.tracker.click();
 			};
 
-			if(ui){
+			if (ui) {
 				ui.addEventListener('click', onAdClick, true);
 			}
 		}
@@ -133,12 +133,13 @@ module.exports = {
 			player.video.tracker.setProgress(duration);
 
 			var title = container.querySelectorAll('.fp-title')[0];
+			var header = container.querySelectorAll('.fp-header')[0];
 
 			if (title) {
 				if (!onClick) {
 					onClick = true;
 
-					title.onclick = function () {
+					var onSkipClick = function () {
 						if (player.video.skip && player.video.time >= player.video.skip) {
 							skipped = true;
 
@@ -147,6 +148,13 @@ module.exports = {
 							player.play(1);
 						}
 					};
+
+					title.onclick = onSkipClick;
+
+					if (header) {
+						// header can overlap title, so need to register in both places
+						header.onclick = onSkipClick;
+					}
 				}
 
 				if (player.video.skip) {
